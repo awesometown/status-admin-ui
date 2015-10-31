@@ -24,13 +24,13 @@ const AdminApp = React.createClass({
 					<Row>
 						<Col sm={3} md={2} className="sidebar">
 							<Nav stacked activeKey={1} className="nav-sidebar">
-								<IndexLinkContainer>
+								<LinkContainer to="/">
 									<NavItem eventKey={1}>Home</NavItem>
-								</IndexLinkContainer>
-								<LinkContainer to="incidents">
+								</LinkContainer>
+								<LinkContainer to="/incidents">
 									<NavItem eventKey={2} title="Item">Incidents</NavItem>
 								</LinkContainer>
-								<LinkContainer to="services">
+								<LinkContainer to="/services">
 									<NavItem eventKey={3}>Services</NavItem>
 								</LinkContainer>
 							</Nav>
