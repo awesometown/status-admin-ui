@@ -1,17 +1,4 @@
-import React from "react";
-import { Link } from "react-router";
-import {Jumbotron, Grid, Col, Row, Table} from "react-bootstrap"
-
-
-export default React.createClass({
-	render: function () {
-		return (
-			<p>Hi there</p>
-		);
-	}
-});
-
-var SERVICES = {
+const SERVICES = {
 	"data": [
 		{
 			"id": "034db69f-9a6e-48be-b154-ded387ca1b2e",
@@ -27,3 +14,5 @@ var SERVICES = {
 		}
 	]
 }
+
+export default SERVICES;
