@@ -23,7 +23,7 @@ var Incident = React.createClass({
 		return (
 			<Row>
 				<Col md={4}>
-					<h3>{this.props.incident.title}</h3>
+					<h3><Link to="/incidents/{this.props.incident.id}">{this.props.incident.title}</Link></h3>
 					<h5>{this.props.incident.serviceStatusId}</h5>
 
 					<p>**{this.props.incident.state}** - Last message goes here</p>

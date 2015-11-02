@@ -9,6 +9,7 @@ import createBrowserHistory from 'history/lib/createBrowserHistory';
 import AdminDashboard from "./dashboard";
 import IncidentList from "./incidents/list";
 import NewIncident from "./incidents/new";
+import UpdateIncident from "./incidents/update";
 import {IndexLinkContainer, LinkContainer} from "react-router-bootstrap";
 
 //import ServiceList from "./services";
@@ -53,6 +54,7 @@ ReactDOM.render((
 				<IndexRoute component={AdminDashboard}/>
 				<Route path="incidents" component={IncidentList}/>
 				<Route path="incidents/new" component={NewIncident}/>
+				<Route path="incidents/:incidentId" component={UpdateIncident}/>
 				<Route path="services" component={ServiceList}/>
 				<Route path="services/new" component={NewService}/>
 			</Route>
