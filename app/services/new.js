@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 import {PageHeader, Grid, Col, Row, Table} from "react-bootstrap"
 import axios from "axios";
+import history from "../history";
 
 export default React.createClass({
 
@@ -16,6 +17,9 @@ export default React.createClass({
 			description: description
 		}).then(response => {
 			console.log(response);
+			var location = response.headers["location"];
+			var id = location.substring(location.lastIndexOf('/') + 1);
+			history.replaceState(null, "/services/" + id);
 		}).catch(response => {
 			console.log(response);
 		})

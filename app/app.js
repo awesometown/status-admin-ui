@@ -5,7 +5,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Router, Route, IndexRoute, Link } from "react-router";
 import { Navbar, NavBrand, Nav, NavItem, Grid, Row, Col } from "react-bootstrap";
-import createBrowserHistory from 'history/lib/createBrowserHistory';
+import history from './history';
 import AdminDashboard from "./dashboard";
 import IncidentList from "./incidents/list";
 import NewIncident from "./incidents/new";
@@ -15,6 +15,7 @@ import {IndexLinkContainer, LinkContainer} from "react-router-bootstrap";
 //import ServiceList from "./services";
 import ServiceList from "./services/list";
 import NewService from "./services/new";
+import ViewService from "./services/details";
 
 const AdminApp = React.createClass({
 	render() {
@@ -49,7 +50,7 @@ const AdminApp = React.createClass({
 });
 
 ReactDOM.render((
-		<Router>
+		<Router history={history}>
 			<Route path="/" component={AdminApp}>
 				<IndexRoute component={AdminDashboard}/>
 				<Route path="incidents" component={IncidentList}/>
@@ -57,6 +58,7 @@ ReactDOM.render((
 				<Route path="incidents/:incidentId" component={UpdateIncident}/>
 				<Route path="services" component={ServiceList}/>
 				<Route path="services/new" component={NewService}/>
+				<Route path="services/:serviceId" component={ViewService}/>
 			</Route>
 		</Router>
 	), document.getElementById("app-container")

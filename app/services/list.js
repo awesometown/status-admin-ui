@@ -1,38 +1,44 @@
 import React from "react";
 import { Link } from "react-router";
-import {PageHeader, Grid, Col, Row, Table} from "react-bootstrap"
-import SERVICES from "../data/services"
+import {PageHeader, Button, Grid, Col, Row, Table} from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap";
+import SERVICES from "../data/services";
 import axios from "axios";
 
 export default React.createClass({
 
-	getInitialState: function() {
+	getInitialState: function () {
 		return {
 			services: []
 		};
 	},
 
-	componentDidMount: function() {
+	componentDidMount: function () {
 		axios.get("http://localhost:9000/api/services")
-		.then(result => {
-				this.setState({services: result.data});
-				console.log(result);
+			.then(result => {
+				if (this.isMounted()) {
+					this.setState({services: result.data.data});
+					console.log(result);
+				}
 			})
-		.catch(result => console.log(result));
+			.catch(result => console.log(result));
 	},
 
 	render: function () {
+		var buttonStyle = {
+			float: "right",
+			marginTop: "10px"
+		};
 
-		//var serviceNodes = SERVICES.data.map(service => <li key={service.id}>{service.name}</li>);
-		var serviceNodes = this.state.services.map(service => <li key={service.id}>{service.name}</li>);
+		var serviceNodes = this.state.services.map(service =>
+			<li key={service.id}><Link to={"/services/" + service.id}>{service.name}</Link></li>);
 		return (
 			<div id="services-list">
+				<LinkContainer to="/services/new"><Button style={buttonStyle}>New Service</Button></LinkContainer>
 				<PageHeader>Services</PageHeader>
 				<ul>
 					{serviceNodes}
 				</ul>
-				<Link to="/services/new">Create new service</Link>
-				{this.props.children}
 			</div>
 		);
 	}
