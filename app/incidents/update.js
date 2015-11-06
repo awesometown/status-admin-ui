@@ -1,12 +1,35 @@
 import React from "react";
 import { Link } from "react-router";
 import {PageHeader, Grid, Col, Row, Table} from "react-bootstrap";
-import INCIDENTS from "../data/incidents";
+import axios from "axios";
 import SERVICES from "../data/services";
 
 export default React.createClass({
 	getInitialState: function () {
-		return {incident: INCIDENTS.data[0]};
+		return {
+			incident: {
+				"id": "",
+				"title": "",
+				"state": "",
+				"serviceStatusId": "",
+				"affectedServiceIds": [],
+				"createdAt": "",
+				"updatedAt": "",
+				"incidentUpdates": []
+			}
+		};
+	},
+
+	componentDidMount: function () {
+		var incidentId = window.location.href.substring(window.location.href.lastIndexOf("/") + 1);
+		axios.get("http://localhost:9000/api/incidents/" + incidentId)
+			.then(result => {
+				if (this.isMounted()) {
+					this.setState({incident: result.data});
+					console.log(result);
+				}
+			})
+			.catch(result => console.log(result));
 	},
 
 	render: function () {

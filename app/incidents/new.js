@@ -1,36 +1,94 @@
 import React from "react";
 import { Link } from "react-router";
-import {PageHeader, Grid, Col, Row, Table} from "react-bootstrap"
+import {PageHeader, Grid, Col, Row, Table} from "react-bootstrap";
+import axios from "axios";
 import SERVICES from "../data/services"
 
 export default React.createClass({
+	getInitialState: function () {
+		return {services: []};
+	},
+
+	componentDidMount: function () {
+		console.log("hello?");
+		axios.get("http://localhost:9000/api/services")
+			.then(result => {
+				console.log(result);
+				if (this.isMounted()) {
+					this.setState({services: result.data.data});
+				}
+			})
+			.catch(result => console.log(result));
+	},
+
+	handleSubmit: function () {
+		axios.post("http://localhost:9000/api/incidents", update).then(response => {
+			console.log(response);
+			var location = response.headers["location"];
+			var id = location.substring(location.lastIndexOf('/') + 1);
+			history.replaceState(null, "/services/" + id);
+		}).catch(response => {
+			console.log(response);
+		});
+	},
+
 	render: function () {
 		return (
 			<div id="content">
 				<PageHeader>New Incident</PageHeader>
-				<NewIncidentForm services={SERVICES.data}/>
+				<NewIncidentForm services={this.state.services} onSubmit={this.handleSubmit}/>
 			</div>
 		);
 	}
 });
 
 var NewIncidentForm = React.createClass({
+
+	getInitialState: function () {
+		return {state: '', serviceStatusId: '', description: ''};
+	},
+
+	handleClick: function (e) {
+		e.preventDefault();
+		var update = {
+			"serviceStatusId": this.state.serviceStatusId,
+			"state": this.state.state,
+			"description": this.state.description
+		};
+		this.props.onSubmit(update);
+	},
+
+	handleStateChange: function (incidentState) {
+		this.setState({state: incidentState});
+	},
+
+	handleDescriptionChange: function (description) {
+		this.setState({description: description});
+	},
+
+	handleStatusChange: function (status) {
+		this.setState({status: status});
+	},
+
 	render: function () {
 		return (
 			<form id="new-incident-form" role="form">
 				<div className="form-group">
 					<label htmlFor="title">Title</label>
-					<input type="text" className="form-control" name="title" id="title"/>
+					<input type="text" className="form-control" name="title" id="title" ref="title"
+						   onChange={this.handleTitleChange}/>
 				</div>
 				<div className="form-group">
 					<label htmlFor="description">Text for initial update</label>
-					<textarea className="form-control" name="description" id="description"></textarea>
+					<textarea className="form-control" name="description" id="description" ref="description"
+							  onChange={this.handleDescriptionChange}></textarea>
 				</div>
 
-				<StateSelector/>
-				<AffectedServicesSelector services={this.props.services}/>
-				<StatusSelector/>
-				<button type="submit" value="Create" name="Create" id="submit" className="btn btn-default">Create
+				<StateSelector onUserInput={this.handleStateChange}/>
+				<AffectedServicesSelector services={this.props.services} onChange={this.handleServicesChange}/>
+				<StatusSelector onChange={this.handleStatusChange}/>
+				<button type="submit" value="Create" name="Create" id="submit" className="btn btn-default"
+						onClick={this.handleClick}>Create
 				</button>
 			</form>
 		);
@@ -38,23 +96,44 @@ var NewIncidentForm = React.createClass({
 });
 
 var StateSelector = React.createClass({
+	handleChange: function () {
+		this.props.onChange(this.refs.state.value.trim());
+	},
+
 	render: function () {
+		var states = ['investigating', 'identified', 'monitoring', 'resolved'];
+		var stateNodes = states.map(function (state) {
+			return (
+				<option key={state} value={state}>{state}</option>
+			);
+		});
 		return (
 			<div className="form-group">
 				<label htmlFor="state">State</label>
-				<select className="form-control" id="state" name="state">
-					<option value="state">state</option>
+				<select className="form-control" id="state" name="state" ref="state" onChange={this.handleChange}>
+					{stateNodes}
 				</select>
 			</div>);
 	}
 });
 
 var AffectedServicesSelector = React.createClass({
+	getInitialState: function () {
+		return {serviceIds: []};
+	},
+
+	handleSelection: function (event) {
+		this.refs.forEach(item => console.log(item));
+		//this.props.onChange()
+		console.log(event.target.value);
+	},
+
 	render: function () {
 		var serviceNodes = this.props.services.map(service =>
 			<div className="checkbox-inline" key={service.id}>
-				<label><input type="checkbox" className="service-checkbox" id="service_{service.id}"
-							  value="{service.id}"/>{service.name}</label>
+				<label><input type="checkbox" ref={"service_" + service.id} className="service-checkbox"
+							  id={"service_" + service.id}
+							  value={service.id} onChange={this.handleSelection}/>{service.name}</label>
 			</div>);
 		return (
 			<div className="form-group">
@@ -69,12 +148,23 @@ var AffectedServicesSelector = React.createClass({
 });
 
 var StatusSelector = React.createClass({
+	handleChange: function () {
+		this.props.onChange(this.refs.status.value.trim());
+	},
+
 	render: function () {
+		var statuses = ['ok', 'degraded', 'minor', 'major']
+		var statusNodes = statuses.map(function (status) {
+			return (
+				<option key={status} value={status}>{status}</option>
+			);
+		});
 		return (
 			<div className="form-group">
 				<label htmlFor="status">New Services Status</label>
-				<select className="form-control" id="status" name="serviceStatusId">
-					<option value="{status.id}">status.name</option>
+				<select className="form-control" id="status" name="serviceStatusId" ref="status"
+						onChange={this.handleChange}>
+					{statusNodes}
 				</select>
 			</div>
 		);
