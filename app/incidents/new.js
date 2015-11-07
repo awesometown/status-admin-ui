@@ -45,15 +45,22 @@ export default React.createClass({
 var NewIncidentForm = React.createClass({
 
 	getInitialState: function () {
-		return {state: '', serviceStatusId: '', description: ''};
+		return {
+			title: '',
+			state: 'investigating',
+			serviceStatusId: 'degraded',
+			description: '',
+			affectedServiceIds: []};
 	},
 
 	handleClick: function (e) {
 		e.preventDefault();
 		var update = {
+			"title": this.state.title,
 			"serviceStatusId": this.state.serviceStatusId,
 			"state": this.state.state,
-			"description": this.state.description
+			"description": this.state.description,
+			"affectedServiceIds": this.state.affectedServiceIds
 		};
 		this.props.onSubmit(update);
 	},
@@ -62,12 +69,20 @@ var NewIncidentForm = React.createClass({
 		this.setState({state: incidentState});
 	},
 
-	handleDescriptionChange: function (description) {
-		this.setState({description: description});
+	handleTitleChange: function (event) {
+		this.setState({title: event.target.value});
+	},
+
+	handleDescriptionChange: function (event) {
+		this.setState({description: event.target.value});
 	},
 
 	handleStatusChange: function (status) {
 		this.setState({status: status});
+	},
+
+	handleServicesChange: function(serviceIds) {
+		this.setState({affectedServiceIds: serviceIds});
 	},
 
 	render: function () {
@@ -84,7 +99,7 @@ var NewIncidentForm = React.createClass({
 							  onChange={this.handleDescriptionChange}></textarea>
 				</div>
 
-				<StateSelector onUserInput={this.handleStateChange}/>
+				<StateSelector onChange={this.handleStateChange} defaultValue={this.state.state}/>
 				<AffectedServicesSelector services={this.props.services} onChange={this.handleServicesChange}/>
 				<StatusSelector onChange={this.handleStatusChange}/>
 				<button type="submit" value="Create" name="Create" id="submit" className="btn btn-default"
@@ -110,7 +125,7 @@ var StateSelector = React.createClass({
 		return (
 			<div className="form-group">
 				<label htmlFor="state">State</label>
-				<select className="form-control" id="state" name="state" ref="state" onChange={this.handleChange}>
+				<select className="form-control" id="state" name="state" ref="state" defaultValue={this.props.defaultValue} onChange={this.handleChange}>
 					{stateNodes}
 				</select>
 			</div>);
@@ -123,9 +138,15 @@ var AffectedServicesSelector = React.createClass({
 	},
 
 	handleSelection: function (event) {
-		this.refs.forEach(item => console.log(item));
-		//this.props.onChange()
-		console.log(event.target.value);
+		var serviceIds = new Set(this.state.serviceIds);
+		if (event.target.checked) {
+			serviceIds.add(event.target.value);
+		} else {
+			serviceIds.delete(event.target.value);
+		}
+		this.setState({serviceIds: Array.from(serviceIds)});
+		this.props.onChange(this.state.serviceIds);
+		console.log(serviceIds);
 	},
 
 	render: function () {
