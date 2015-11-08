@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router";
-import {PageHeader, Grid, Col, Row, Table} from "react-bootstrap"
+import { LinkContainer } from "react-router-bootstrap";
+import {PageHeader, Button, Grid, Col, Row, Table} from "react-bootstrap";
 import axios from "axios";
 import moment from "moment";
 
@@ -23,10 +24,16 @@ export default React.createClass({
 	},
 
 	render: function () {
+		var buttonStyle = {
+			float: "right",
+			marginTop: "10px"
+		};
+
 		var incidentNodes = this.state.incidents.map(incident => <Incident key={incident.id} incident={incident}/>);
 		return (
 			<div id="incident-list">
-				<PageHeader>Incidents - <Link to="/incidents/new">Post a new incident</Link></PageHeader>
+				<LinkContainer to="/incidents/new"><Button style={buttonStyle}>New Service</Button></LinkContainer>
+				<PageHeader>Incidents</PageHeader>
 				<Grid>
 					{incidentNodes}
 				</Grid>
