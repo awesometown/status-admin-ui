@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 import {PageHeader, Grid, Col, Row, Table} from "react-bootstrap"
 import axios from "axios";
+import moment from "moment";
 
 export default React.createClass({
 	getInitialState: function () {
@@ -45,7 +46,7 @@ var Incident = React.createClass({
 					<p>**{this.props.incident.state}** - Last message goes here</p>
 				</Col>
 				<Col md={4}>
-					<p>{this.props.incident.updatedAt}</p>
+					<p>Updated {moment(this.props.incident.updatedAt).fromNow()}</p>
 
 					<p>Affected Services:</p>
 					<ul>

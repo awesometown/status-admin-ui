@@ -2,7 +2,8 @@ import React from "react";
 import { Link } from "react-router";
 import {PageHeader, Grid, Col, Row, Table} from "react-bootstrap";
 import axios from "axios";
-import SERVICES from "../data/services"
+import history from "../history";
+import StatusClient from "../clients/statusclient";
 
 export default React.createClass({
 	getInitialState: function () {
@@ -21,15 +22,17 @@ export default React.createClass({
 			.catch(result => console.log(result));
 	},
 
-	handleSubmit: function () {
-		axios.post("http://localhost:9000/api/incidents", update).then(response => {
-			console.log(response);
-			var location = response.headers["location"];
-			var id = location.substring(location.lastIndexOf('/') + 1);
-			history.replaceState(null, "/services/" + id);
-		}).catch(response => {
-			console.log(response);
-		});
+	handleSubmit: function (update) {
+
+		new StatusClient("http://localhost:9000").createIncident(update)
+			.then(response => {
+				console.log(response);
+				var location = response.headers["location"];
+				var id = location.substring(location.lastIndexOf('/') + 1);
+				history.replaceState(null, "/services/" + id);
+			}).catch(response => {
+				console.log(response);
+			});
 	},
 
 	render: function () {
@@ -50,7 +53,8 @@ var NewIncidentForm = React.createClass({
 			state: 'investigating',
 			serviceStatusId: 'degraded',
 			description: '',
-			affectedServiceIds: []};
+			affectedServiceIds: []
+		};
 	},
 
 	handleClick: function (e) {
@@ -81,7 +85,7 @@ var NewIncidentForm = React.createClass({
 		this.setState({status: status});
 	},
 
-	handleServicesChange: function(serviceIds) {
+	handleServicesChange: function (serviceIds) {
 		this.setState({affectedServiceIds: serviceIds});
 	},
 
@@ -101,7 +105,7 @@ var NewIncidentForm = React.createClass({
 
 				<StateSelector onChange={this.handleStateChange} defaultValue={this.state.state}/>
 				<AffectedServicesSelector services={this.props.services} onChange={this.handleServicesChange}/>
-				<StatusSelector onChange={this.handleStatusChange}/>
+				<StatusSelector onChange={this.handleStatusChange} defaultValue={this.state.serviceStatusId}/>
 				<button type="submit" value="Create" name="Create" id="submit" className="btn btn-default"
 						onClick={this.handleClick}>Create
 				</button>
@@ -125,7 +129,8 @@ var StateSelector = React.createClass({
 		return (
 			<div className="form-group">
 				<label htmlFor="state">State</label>
-				<select className="form-control" id="state" name="state" ref="state" defaultValue={this.props.defaultValue} onChange={this.handleChange}>
+				<select className="form-control" id="state" name="state" ref="state"
+						defaultValue={this.props.defaultValue} onChange={this.handleChange}>
 					{stateNodes}
 				</select>
 			</div>);
@@ -184,7 +189,7 @@ var StatusSelector = React.createClass({
 			<div className="form-group">
 				<label htmlFor="status">New Services Status</label>
 				<select className="form-control" id="status" name="serviceStatusId" ref="status"
-						onChange={this.handleChange}>
+						onChange={this.handleChange} defaultValue={this.props.defaultValue}>
 					{statusNodes}
 				</select>
 			</div>
