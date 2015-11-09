@@ -78,36 +78,42 @@ var IncidentList = React.createClass({
 var Incident = React.createClass({
 	render: function () {
 		let map = this.props.servicesMap;
-		let serviceNodes = this.props.incident.affectedServiceIds.map(serviceId => <li key={serviceId}>{map[serviceId]}</li>);
+		let serviceNodes = this.props.incident.affectedServiceIds.map(serviceId => <li
+			key={serviceId}>{map[serviceId]}</li>);
 		let lastMessage = this.props.incident.incidentUpdates[0].description;
 
-
+		let servicesPanel = null;
+		if (this.props.incident.affectedServiceIds.length > 0) {
+			servicesPanel = (
+				<Panel style={{fontSize:"90%", padding:"0px", backgroundColor:"#EEEEEE"}}>
+					<h5 style={{marginTop:"0px"}}>Affected Services:</h5>
+					<ul style={{paddingLeft:"20px", marginTop:"5px"}}>
+						{serviceNodes}
+					</ul>
+				</Panel>);
+		}
 
 		return (
 			<Panel>
 				<Grid fluid={true}>
 					<Row>
 						<Col md={12}>
-							<p style={{float: "right", align: "right"}}>Updated {moment(this.props.incident.updatedAt).fromNow()}</p>
-							<h3><Link to={"/incidents/"+this.props.incident.id}>{this.props.incident.title}</Link></h3>
-						</Col>
-						</Row>
+							<p style={{float: "right", align: "right"}}>
+								Updated {moment(this.props.incident.updatedAt).fromNow()}</p>
 
+							<h3 style={{marginTop: "0px"}}><Link
+								to={"/incidents/"+this.props.incident.id}>{this.props.incident.title}</Link></h3>
+						</Col>
+					</Row>
 					<Row>
-						<Col md={5}>
+						<Col md={8}>
 
 							<h4>{this.props.incident.serviceStatusId}</h4>
 
 							<p><strong>{this.props.incident.state}</strong> - {lastMessage}</p>
 						</Col>
-						<Col md={3}>
-
-
-
-							<p>Affected Services:</p>
-							<ul>
-								{serviceNodes}
-							</ul>
+						<Col md={4}>
+							{servicesPanel}
 						</Col>
 					</Row>
 				</Grid>
