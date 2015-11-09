@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router";
 import { LinkContainer } from "react-router-bootstrap";
-import {PageHeader, Button, Grid, Col, Row, Table} from "react-bootstrap";
+import {PageHeader, Panel, Button, Grid, Col, Row, Table} from "react-bootstrap";
 import StatusClient from "../clients/statusclient";
 import moment from "moment";
 
@@ -28,7 +28,7 @@ export default React.createClass({
 			.then(result => {
 				if (this.isMounted()) {
 					let servicesMap = {};
-					for(let service of result.data.data) {
+					for (let service of result.data.data) {
 						servicesMap[service.id] = service.name;
 					}
 					this.setState({servicesMap: servicesMap});
@@ -44,21 +44,33 @@ export default React.createClass({
 			marginTop: "10px"
 		};
 
-		let incidentNodes;
-		if(this.state.loaded) {
-			incidentNodes = this.state.incidents.map(incident => <Incident key={incident.id} incident={incident} servicesMap={this.state.servicesMap}/>);
+		let content;
+		if (this.state.loaded) {
+			content = <IncidentList incidents={this.state.incidents} servicesMap={this.state.servicesMap}/>
 		} else {
-			incidentNodes = [];
+			content = null;
 		}
 
 		return (
-			<div id="incident-list">
+			<div id="content">
 				<LinkContainer to="/incidents/new"><Button style={buttonStyle}>New Incident</Button></LinkContainer>
 				<PageHeader>Incidents</PageHeader>
-				<Grid>
-					{incidentNodes}
-				</Grid>
+				{content}
 			</div>
+		);
+	}
+});
+
+var IncidentList = React.createClass({
+	render: function () {
+		let incidentNodes = this.props.incidents.map(incident => <Incident key={incident.id} incident={incident}
+																		   servicesMap={this.props.servicesMap}/>);
+		return (
+			<Row>
+				<Col mdOffset={1} md={10}>
+					{incidentNodes}
+				</Col>
+			</Row>
 		);
 	}
 });
@@ -66,26 +78,40 @@ export default React.createClass({
 var Incident = React.createClass({
 	render: function () {
 		let map = this.props.servicesMap;
-		let serviceNodes = this.props.incident.affectedServiceIds.map(serviceId => <li>{map[serviceId]}</li>);
+		let serviceNodes = this.props.incident.affectedServiceIds.map(serviceId => <li key={serviceId}>{map[serviceId]}</li>);
 		let lastMessage = this.props.incident.incidentUpdates[0].description;
 
+
+
 		return (
-			<Row>
-				<Col md={4}>
-					<h3><Link to={"/incidents/"+this.props.incident.id}>{this.props.incident.title}</Link></h3>
-					<h4>{this.props.incident.serviceStatusId}</h4>
+			<Panel>
+				<Grid fluid={true}>
+					<Row>
+						<Col md={12}>
+							<p style={{float: "right", align: "right"}}>Updated {moment(this.props.incident.updatedAt).fromNow()}</p>
+							<h3><Link to={"/incidents/"+this.props.incident.id}>{this.props.incident.title}</Link></h3>
+						</Col>
+						</Row>
 
-					<p><strong>{this.props.incident.state}</strong> - {lastMessage}</p>
-				</Col>
-				<Col md={4}>
-					<p>Updated {moment(this.props.incident.updatedAt).fromNow()}</p>
+					<Row>
+						<Col md={5}>
 
-					<p>Affected Services:</p>
-					<ul>
-						{serviceNodes}
-					</ul>
-				</Col>
-			</Row>
+							<h4>{this.props.incident.serviceStatusId}</h4>
+
+							<p><strong>{this.props.incident.state}</strong> - {lastMessage}</p>
+						</Col>
+						<Col md={3}>
+
+
+
+							<p>Affected Services:</p>
+							<ul>
+								{serviceNodes}
+							</ul>
+						</Col>
+					</Row>
+				</Grid>
+			</Panel>
 		);
 	}
 });
