@@ -99,7 +99,7 @@ var IncidentUpdateForm = React.createClass({
 
 var AffectedServiceList = React.createClass({
 	render: function () {
-		var affectedServiceNodes = this.props.affectedServices.map(service => <li key={service.id}>{service.name}</li>);
+		var affectedServiceNodes = this.props.affectedServices.map(service => <li key={service}>{service}</li>);
 
 		return (
 			<ul>
