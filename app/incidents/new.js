@@ -29,7 +29,7 @@ export default React.createClass({
 				console.log(response);
 				var location = response.headers["location"];
 				var id = location.substring(location.lastIndexOf('/') + 1);
-				history.replaceState(null, "/services/" + id);
+				history.replaceState(null, "/incidents/" + id);
 			}).catch(response => {
 				console.log(response);
 			});

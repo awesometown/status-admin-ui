@@ -13,6 +13,10 @@ export default class StatusClient {
 		return axios.get(this.baseUrl + "/api/incidents");
 	}
 
+	getActiveIncidents() {
+		return axios.get(this.baseUrl + "/api/incidents/active");
+	}
+
 	getIncident(incidentId) {
 		return axios.get(this.baseUrl + "/api/incidents/" + incidentId);
 	}
