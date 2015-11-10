@@ -1,9 +1,8 @@
 import React from "react";
 import { Link } from "react-router";
 import {PageHeader, Grid, Col, Row, Table} from "react-bootstrap";
-import axios from "axios";
 import history from "../history";
-import StatusClient from "../clients/statusclient";
+import { StatusClient } from "../app";
 
 export default React.createClass({
 	getInitialState: function () {
@@ -24,7 +23,7 @@ export default React.createClass({
 
 	handleSubmit: function (update) {
 
-		new StatusClient("http://localhost:9000").createIncident(update)
+		StatusClient.createIncident(update)
 			.then(response => {
 				console.log(response);
 				var location = response.headers["location"];

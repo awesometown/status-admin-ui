@@ -2,8 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 import {PageHeader, Button, Grid, Col, Row, Table} from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
-import SERVICES from "../data/services";
-import axios from "axios";
+import { StatusClient } from "../app";
 
 export default React.createClass({
 
@@ -14,7 +13,7 @@ export default React.createClass({
 	},
 
 	componentDidMount: function () {
-		axios.get("http://localhost:9000/api/services")
+		StatusClient.getServices()
 			.then(result => {
 				if (this.isMounted()) {
 					this.setState({services: result.data.data});

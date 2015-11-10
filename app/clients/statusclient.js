@@ -9,6 +9,14 @@ export default class StatusClient {
 		return axios.get(this.baseUrl + "/api/services");
 	}
 
+	createService(service) {
+		return axios.post(this.baseUrl + "/api/services", service);
+	}
+
+	getService(serviceId) {
+		return axios.get(this.baseUrl + "/api/services/" + serviceId);
+	}
+
 	getIncidents() {
 		return axios.get(this.baseUrl + "/api/incidents");
 	}
@@ -22,7 +30,7 @@ export default class StatusClient {
 	}
 
 	createIncident(incident) {
-		return axios.post("http://localhost:9000/api/incidents", incident);
+		return axios.post(this.baseUrl + "/api/incidents", incident);
 	}
 
 	updateIncident(incidentId, update) {

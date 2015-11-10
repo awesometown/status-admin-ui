@@ -1,8 +1,7 @@
 import React from "react";
 import { Link } from "react-router";
 import {PageHeader, Grid, Col, Row, Table} from "react-bootstrap";
-import SERVICES from "../data/services";
-import axios from "axios";
+import { StatusClient } from "../app";
 
 export default React.createClass({
 
@@ -20,7 +19,7 @@ export default React.createClass({
 		var location = window.location.href;
 		var id = location.substring(location.lastIndexOf('/') + 1);
 
-		axios.get("http://localhost:9000/api/services/" + id)
+		StatusClient.getService(id)
 			.then(result => {
 				this.setState({service: result.data });
 				console.log(result);

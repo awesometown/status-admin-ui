@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router";
 import {PageHeader, Grid, Col, Row, Table} from "react-bootstrap"
-import axios from "axios";
+import { StatusClient } from "../app";
 import history from "../history";
 
 export default React.createClass({
@@ -11,8 +11,7 @@ export default React.createClass({
 		e.preventDefault();
 		var name = this.refs.name.value.trim();
 		var description = this.refs.description.value.trim();
-
-		axios.post("http://localhost:9000/api/services", {
+		StatusClient.createService({
 			name: name,
 			description: description
 		}).then(response => {

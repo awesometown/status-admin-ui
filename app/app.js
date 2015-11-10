@@ -11,11 +11,13 @@ import IncidentList from "./incidents/list";
 import NewIncident from "./incidents/new";
 import UpdateIncident from "./incidents/update";
 import {IndexLinkContainer, LinkContainer} from "react-router-bootstrap";
+import SC from "./clients/statusclient";
 
-//import ServiceList from "./services";
 import ServiceList from "./services/list";
 import NewService from "./services/new";
 import ViewService from "./services/details";
+
+export var StatusClient = new SC("http://localhost:9000");
 
 const AdminApp = React.createClass({
 	render() {
