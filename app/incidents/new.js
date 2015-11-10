@@ -80,7 +80,7 @@ var NewIncidentForm = React.createClass({
 	},
 
 	handleStatusChange: function (status) {
-		this.setState({status: status});
+		this.setState({serviceStatusId: status});
 	},
 
 	handleServicesChange: function (serviceIds) {
@@ -147,8 +147,9 @@ var AffectedServicesSelector = React.createClass({
 		} else {
 			serviceIds.delete(event.target.value);
 		}
-		this.setState({serviceIds: Array.from(serviceIds)});
-		this.props.onChange(this.state.serviceIds);
+		let serviceIdsArray = Array.from(serviceIds);
+		this.setState({serviceIds: serviceIdsArray});
+		this.props.onChange(serviceIdsArray);
 		console.log(serviceIds);
 	},
 
