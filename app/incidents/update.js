@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 import {PageHeader, Grid, Col, Row, Table} from "react-bootstrap";
 import axios from "axios";
-import { StatusClient } from "../app";
+import { StatusClient } from "../globals";
 
 export default React.createClass({
 	getInitialState: function () {

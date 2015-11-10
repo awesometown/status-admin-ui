@@ -11,25 +11,10 @@ import IncidentList from "./incidents/list";
 import NewIncident from "./incidents/new";
 import UpdateIncident from "./incidents/update";
 import {IndexLinkContainer, LinkContainer} from "react-router-bootstrap";
-import SC from "./clients/statusclient";
 
 import ServiceList from "./services/list";
 import NewService from "./services/new";
 import ViewService from "./services/details";
-
-var myBaseUrl;
-if (typeof baseUrl !== 'undefined') {
-	myBaseUrl = baseUrl;
-	console.log("baseUrl defined: " + myBaseUrl);
-} else {
-	myBaseUrl = window.location.protocol + "//" + window.location.hostname;
-	if (window.location.port) {
-		myBaseUrl = myBaseUrl + ":" + window.location.port;
-	}
-	console.log("baseUrl not specified, using " + myBaseUrl);
-}
-
-export var StatusClient = new SC(myBaseUrl);
 
 const AdminApp = React.createClass({
 	render() {

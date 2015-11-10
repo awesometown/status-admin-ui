@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 import {PageHeader, Button, Grid, Col, Row, Table} from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
-import { StatusClient } from "../app";
+import { StatusClient } from "../globals";
 
 export default React.createClass({
 

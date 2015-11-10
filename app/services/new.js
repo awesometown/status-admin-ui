@@ -1,11 +1,10 @@
 import React from "react";
 import { Link } from "react-router";
 import {PageHeader, Grid, Col, Row, Table} from "react-bootstrap"
-import { StatusClient } from "../app";
+import { StatusClient } from "../globals";
 import history from "../history";
 
 export default React.createClass({
-
 
 	handleClick: function(e) {
 		e.preventDefault();
