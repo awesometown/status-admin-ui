@@ -34,6 +34,6 @@ export default class StatusClient {
 	}
 
 	updateIncident(incidentId, update) {
-		return axios.post("http://localhost:9000/api/incidents/" + incidentId, update);
+		return axios.post(this.baseUrl + "/api/incidents/" + incidentId, update);
 	}
 }

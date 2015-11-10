@@ -10,8 +10,7 @@ export default React.createClass({
 	},
 
 	componentDidMount: function () {
-		console.log("hello?");
-		axios.get("http://localhost:9000/api/services")
+		StatusClient.getServices()
 			.then(result => {
 				console.log(result);
 				if (this.isMounted()) {
