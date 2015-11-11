@@ -12,15 +12,27 @@ export default React.createClass({
 	},
 
 	componentDidMount: function () {
-		var incidentId = window.location.href.substring(window.location.href.lastIndexOf("/") + 1);
-		StatusClient.getIncident(incidentId)
+		let incidentId = window.location.href.substring(window.location.href.lastIndexOf("/") + 1);
+		let incidentsPromise = StatusClient.getIncident(incidentId)
 			.then(result => {
 				if (this.isMounted()) {
-					this.setState({incident: result.data, loaded: true});
+					this.setState({incident: result.data});
 					console.log(result);
 				}
 			})
 			.catch(result => console.log(result));
+		let servicesPromise = StatusClient.getServices()
+			.then(result => {
+				if (this.isMounted()) {
+					let servicesMap = {};
+					for (let service of result.data.data) {
+						servicesMap[service.id] = service.name;
+					}
+					this.setState({servicesMap: servicesMap});
+				}
+			})
+			.catch(result => console.log(result));
+		Promise.all([incidentsPromise, servicesPromise]).then(values => this.setState({loaded: true}));
 	},
 
 	render: function () {
@@ -28,6 +40,8 @@ export default React.createClass({
 		if (!this.state.loaded) {
 			content = (<div>Loading...</div>);
 		} else {
+			let servicesMap = this.state.servicesMap;
+			let affectedServices = this.state.incident.affectedServiceIds.map(serviceId => servicesMap[serviceId]);
 			content = (<div id="content">
 				<PageHeader>{this.state.incident.title}</PageHeader>
 
@@ -36,7 +50,7 @@ export default React.createClass({
 				<p>Service Status: {this.state.incident.serviceStatusId}</p>
 
 				<p>Affected Services:</p>
-				<AffectedServiceList affectedServices={this.state.incident.affectedServiceIds}/>
+				<AffectedServiceList affectedServices={affectedServices}/>
 				<IncidentUpdateForm initialState={this.state.incident.state}
 									initialServiceStatusId={this.state.incident.serviceStatusId}/>
 				<IncidentUpdateList incidentUpdates={this.state.incident.incidentUpdates}/>
@@ -99,6 +113,7 @@ var IncidentUpdateForm = React.createClass({
 
 var AffectedServiceList = React.createClass({
 	render: function () {
+		let servicesMap = this.props.servicesMap;
 		var affectedServiceNodes = this.props.affectedServices.map(service => <li key={service}>{service}</li>);
 
 		return (
