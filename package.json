@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "axios": "^0.7.0",
+    "flux": "^2.1.1",
     "history": "^1.13.0",
     "moment": "^2.10.6",
     "react": "^0.14.0",

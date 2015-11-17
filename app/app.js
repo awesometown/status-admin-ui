@@ -3,9 +3,9 @@ import "./admin.css";
 
 import React from "react";
 import ReactDOM from "react-dom";
-import { Router, Route, IndexRoute, Link } from "react-router";
+import { Router, Route, IndexRoute, Link, History } from "react-router";
 import { Navbar, NavBrand, Nav, NavItem, Grid, Row, Col } from "react-bootstrap";
-import history from './history';
+import createHistory from './history';
 import AdminDashboard from "./dashboard";
 import IncidentList from "./incidents/list";
 import NewIncident from "./incidents/new";
@@ -15,6 +15,8 @@ import {IndexLinkContainer, LinkContainer} from "react-router-bootstrap";
 import ServiceList from "./services/list";
 import NewService from "./services/new";
 import ViewService from "./services/details";
+
+import auth from './auth'
 
 const AdminApp = React.createClass({
 	render() {
@@ -48,9 +50,70 @@ const AdminApp = React.createClass({
 	}
 });
 
+function requireAuth(nextState, replaceState) {
+	if (!auth.loggedIn()) {
+		replaceState({nextPathname: nextState.location.pathname}, "/login");
+	}
+}
+
+const Login = React.createClass({
+	mixins: [History],
+
+	getInitialState() {
+		return {
+			error: false
+		}
+	},
+
+	handleSubmit(event) {
+		event.preventDefault()
+
+		const email = this.refs.email.value
+		const pass = this.refs.pass.value
+
+		auth.login(email, pass, (loggedIn) => {
+			if (!loggedIn)
+				return this.setState({error: true});
+
+			const { location } = this.props;
+
+			if (location.state && location.state.nextPathname) {
+				this.history.replaceState(null, location.state.nextPathname)
+			} else {
+				this.history.replaceState(null, '/')
+			}
+		})
+	},
+
+	render() {
+		return (
+			<form onSubmit={this.handleSubmit}>
+				<label><input ref="email" placeholder="email" defaultValue="joe@example.com"/></label>
+				<label><input ref="pass" placeholder="password"/></label> (hint: password1)<br />
+				<button type="submit">login</button>
+				{this.state.error && (
+					<p>Bad login information</p>
+				)}
+			</form>
+		)
+	}
+})
+
+const Logout = React.createClass({
+	componentDidMount() {
+		auth.logout()
+	},
+
+	render() {
+		return <p>You are now logged out</p>
+	}
+})
+
 ReactDOM.render((
-		<Router history={history}>
-			<Route path="/" component={AdminApp}>
+		<Router history={createHistory}>
+			<Route path="/login" component={Login}/>
+			<Route path="/logout" component={Logout}/>
+			<Route path="/" component={AdminApp} onEnter={requireAuth}>
 				<IndexRoute component={AdminDashboard}/>
 				<Route path="incidents" component={IncidentList}/>
 				<Route path="incidents/new" component={NewIncident}/>

@@ -1,12 +1,25 @@
 import axios from "axios";
+import auth from "../auth";
+import history from "../history";
 
 export default class StatusClient {
 	constructor(baseUrl) {
 		this.baseUrl = baseUrl;
+		axios.interceptors.response.use(
+				response => response,
+				error => {
+				if (error.status = 401) {
+					history.
+				}
+			});
 	}
 
 	getServices() {
-		return axios.get(this.baseUrl + "/api/services");
+		console.log("username: " + this._getUsername());
+		return axios.get(this.baseUrl + "/api/services", {
+			headers: {Authorization: this._getAuthHeaderVal()},
+			withCredentials: true
+		});
 	}
 
 	createService(service) {
@@ -35,5 +48,17 @@ export default class StatusClient {
 
 	updateIncident(incidentId, update) {
 		return axios.post(this.baseUrl + "/api/incidents/" + incidentId, update);
+	}
+
+	_getAuthHeaderVal() {
+		return "Basic " + btoa(auth.getUserId() + ":" + auth.getPassword());
+	}
+
+	_getUsername() {
+		return auth.getUserId();
+	}
+
+	_getPassword() {
+		return auth.getPassword();
 	}
 }
