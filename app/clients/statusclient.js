@@ -1,17 +1,12 @@
 import axios from "axios";
 import auth from "../auth";
-import history from "../history";
 
 export default class StatusClient {
-	constructor(baseUrl) {
+	constructor(baseUrl, authFailHandler) {
 		this.baseUrl = baseUrl;
 		axios.interceptors.response.use(
 				response => response,
-				error => {
-				if (error.status = 401) {
-					history.
-				}
-			});
+				authFailHandler);
 	}
 
 	getServices() {

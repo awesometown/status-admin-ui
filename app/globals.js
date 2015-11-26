@@ -1,3 +1,5 @@
+import auth from "./auth";
+import history from "./history";
 import SC from "./clients/statusclient";
 
 var myBaseUrl;
@@ -12,4 +14,12 @@ if (typeof baseUrl !== 'undefined') {
 	console.log("baseUrl not specified, using " + myBaseUrl);
 }
 
-export var StatusClient = new SC(myBaseUrl);
+
+
+export var StatusClient = new SC(
+	myBaseUrl, error => {
+		if (error.status = 401) {
+			auth.logout();
+			history.replaceState(null, '/login');
+		}
+	});
