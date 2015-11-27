@@ -4,7 +4,6 @@ import "./admin.css";
 import React from "react";
 import ReactDOM from "react-dom";
 import { Router, Route, IndexRoute, Link, History } from "react-router";
-import createHistory from './history';
 
 import AdminDashboard from "./dashboard";
 import IncidentList from "./incidents/list";
@@ -18,7 +17,7 @@ import AdminApp from "./components/AdminApp";
 import Login from "./components/Login";
 
 
-import { auth, statusClient } from "./globals";
+import { auth, statusClient, history } from "./globals";
 
 function requireAuth(nextState, replaceState) {
 	if (!auth.loggedIn()) {
@@ -27,7 +26,7 @@ function requireAuth(nextState, replaceState) {
 }
 
 ReactDOM.render((
-		<Router history={createHistory}>
+		<Router history={history}>
 			<Route path="/login" component={Login}/>
 			<Route path="/" component={AdminApp} onEnter={requireAuth}>
 				<IndexRoute component={AdminDashboard}/>

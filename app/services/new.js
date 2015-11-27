@@ -1,10 +1,10 @@
 import React from "react";
-import { Link } from "react-router";
+import { History, Link } from "react-router";
 import {PageHeader, Grid, Col, Row, Table} from "react-bootstrap"
 import { statusClient } from "../globals";
-import history from "../history";
 
 export default React.createClass({
+	mixins: [History],
 
 	handleClick: function(e) {
 		e.preventDefault();
@@ -17,7 +17,7 @@ export default React.createClass({
 			console.log(response);
 			var location = response.headers["location"];
 			var id = location.substring(location.lastIndexOf('/') + 1);
-			history.replaceState(null, "/services/" + id);
+			this.history.replaceState(null, "/services/" + id);
 		}).catch(response => {
 			console.log(response);
 		})

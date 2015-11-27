@@ -1,5 +1,5 @@
+import { createHistory, useBasename } from 'history'
 import Auth from "./auth";
-import history from "./history";
 import SC from "./clients/statusclient";
 
 var myBaseUrl;
@@ -13,6 +13,16 @@ if (typeof baseUrl !== 'undefined') {
 	}
 	console.log("baseUrl not specified, using " + myBaseUrl);
 }
+
+/* bit of a hack to make react router work both when run at "/" in webpack-dev-server as well as /admin when deployed */
+var historyRoot = "";
+if (window.location.pathname.indexOf("/admin") >= 0) {
+	historyRoot = "/admin";
+}
+
+export var history = useBasename(createHistory)({
+	basename: historyRoot
+});
 
 export var auth = new Auth(myBaseUrl);
 
