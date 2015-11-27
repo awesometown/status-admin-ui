@@ -16,39 +16,46 @@ export default class StatusClient {
 	}
 
 	getServices() {
-		console.log("username: " + this._getUsername());
-		return axios.get(this.baseUrl + "/api/services", {
+		return this._doGet("/api/services");
+	}
+
+	createService(service) {
+		return this._doPost("/api/services", service);
+	}
+
+	getService(serviceId) {
+		return this._doGet("/api/services/" + serviceId);
+	}
+
+	getIncidents() {
+		return this._doGet("/api/incidents");
+	}
+
+	getActiveIncidents() {
+		return this._doGet("/api/incidents/active");
+	}
+
+	getIncident(incidentId) {
+		return this._doGet("/api/incidents/" + incidentId);
+	}
+
+	createIncident(incident) {
+		return this._doPost("/api/incidents", incident);
+	}
+
+	updateIncident(incidentId, update) {
+		return this._doPost("/api/incidents/" + incidentId, update);
+	}
+
+	_doGet(path) {
+		return axios.get(this.baseUrl + path, {
 			headers: {Authorization: this._getAuthHeaderVal()},
 			withCredentials: true
 		});
 	}
 
-	createService(service) {
-		return axios.post(this.baseUrl + "/api/services", service);
-	}
-
-	getService(serviceId) {
-		return axios.get(this.baseUrl + "/api/services/" + serviceId);
-	}
-
-	getIncidents() {
-		return axios.get(this.baseUrl + "/api/incidents");
-	}
-
-	getActiveIncidents() {
-		return axios.get(this.baseUrl + "/api/incidents/active");
-	}
-
-	getIncident(incidentId) {
-		return axios.get(this.baseUrl + "/api/incidents/" + incidentId);
-	}
-
-	createIncident(incident) {
-		return axios.post(this.baseUrl + "/api/incidents", incident);
-	}
-
-	updateIncident(incidentId, update) {
-		return axios.post(this.baseUrl + "/api/incidents/" + incidentId, update);
+	_doPost(path, payload) {
+		return axios.post(this.baseUrl + path, payload);
 	}
 
 	_getAuthHeaderVal() {
