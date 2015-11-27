@@ -7,7 +7,7 @@ export default class StatusClient {
 		this.password = password;
 		axios.interceptors.response.use(
 				response => response,
-				authFailHandler);
+			authFailHandler);
 	}
 
 	setCredentials(userId, password) {
@@ -55,7 +55,10 @@ export default class StatusClient {
 	}
 
 	_doPost(path, payload) {
-		return axios.post(this.baseUrl + path, payload);
+		return axios.post(this.baseUrl + path, payload, {
+			headers: {Authorization: this._getAuthHeaderVal()},
+			withCredentials: true
+		});
 	}
 
 	_getAuthHeaderVal() {
