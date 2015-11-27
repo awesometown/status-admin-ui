@@ -19,7 +19,7 @@
     "style-loader": "^0.13.0"
   },
   "dependencies": {
-    "axios": "^0.7.0",
+    "axios": "mzabriskie/axios#master",
     "flux": "^2.1.1",
     "history": "^1.13.0",
     "moment": "^2.10.6",

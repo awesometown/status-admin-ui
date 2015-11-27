@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 import {PageHeader, Grid, Col, Row, Table} from "react-bootstrap";
 import axios from "axios";
-import { StatusClient } from "../globals";
+import { statusClient } from "../globals";
 
 export default React.createClass({
 	getInitialState: function () {
@@ -13,7 +13,7 @@ export default React.createClass({
 
 	componentDidMount: function () {
 		let incidentId = window.location.href.substring(window.location.href.lastIndexOf("/") + 1);
-		let incidentsPromise = StatusClient.getIncident(incidentId)
+		let incidentsPromise = statusClient.getIncident(incidentId)
 			.then(result => {
 				if (this.isMounted()) {
 					this.setState({incident: result.data});
@@ -21,7 +21,7 @@ export default React.createClass({
 				}
 			})
 			.catch(result => console.log(result));
-		let servicesPromise = StatusClient.getServices()
+		let servicesPromise = statusClient.getServices()
 			.then(result => {
 				if (this.isMounted()) {
 					let servicesMap = {};
@@ -84,7 +84,7 @@ var IncidentUpdateForm = React.createClass({
 		var id = location.substring(location.lastIndexOf('/') + 1);
 
 		var update = { state: this.state.state, serviceStatusId: this.state.serviceStatusId, description: this.state.description };
-		StatusClient.updateIncident(id, update)
+		statusClient.updateIncident(id, update)
 			.then(response => {
 				console.log(response);
 			}).catch(response => {

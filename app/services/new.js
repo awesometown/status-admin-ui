@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router";
 import {PageHeader, Grid, Col, Row, Table} from "react-bootstrap"
-import { StatusClient } from "../globals";
+import { statusClient } from "../globals";
 import history from "../history";
 
 export default React.createClass({
@@ -10,7 +10,7 @@ export default React.createClass({
 		e.preventDefault();
 		var name = this.refs.name.value.trim();
 		var description = this.refs.description.value.trim();
-		StatusClient.createService({
+		statusClient.createService({
 			name: name,
 			description: description
 		}).then(response => {

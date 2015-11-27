@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 import { LinkContainer } from "react-router-bootstrap";
 import {PageHeader, Panel, Button, Grid, Col, Row, Table} from "react-bootstrap";
-import { StatusClient } from "../globals";
+import { statusClient } from "../globals";
 import moment from "moment";
 
 export default React.createClass({
@@ -15,7 +15,7 @@ export default React.createClass({
 	},
 
 	componentDidMount: function () {
-		let incidentsPromise = StatusClient.getActiveIncidents()
+		let incidentsPromise = statusClient.getActiveIncidents()
 			.then(result => {
 				if (this.isMounted()) {
 					this.setState({incidents: result.data.data});
@@ -23,7 +23,7 @@ export default React.createClass({
 				}
 			})
 			.catch(result => console.log(result));
-		let servicesPromise = StatusClient.getServices()
+		let servicesPromise = statusClient.getServices()
 			.then(result => {
 				if (this.isMounted()) {
 					let servicesMap = {};

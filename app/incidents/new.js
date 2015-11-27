@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 import {PageHeader, Grid, Col, Row, Table} from "react-bootstrap";
 import history from "../history";
-import { StatusClient } from "../globals";
+import { statusClient } from "../globals";
 
 export default React.createClass({
 	getInitialState: function () {
@@ -10,7 +10,7 @@ export default React.createClass({
 	},
 
 	componentDidMount: function () {
-		StatusClient.getServices()
+		statusClient.getServices()
 			.then(result => {
 				console.log(result);
 				if (this.isMounted()) {
@@ -22,7 +22,7 @@ export default React.createClass({
 
 	handleSubmit: function (update) {
 
-		StatusClient.createIncident(update)
+		statusClient.createIncident(update)
 			.then(response => {
 				console.log(response);
 				var location = response.headers["location"];

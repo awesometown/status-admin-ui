@@ -1,12 +1,18 @@
 import axios from "axios";
-import auth from "../auth";
 
 export default class StatusClient {
-	constructor(baseUrl, authFailHandler) {
+	constructor(baseUrl, userId, password, authFailHandler) {
 		this.baseUrl = baseUrl;
+		this.userId = userId;
+		this.password = password;
 		axios.interceptors.response.use(
 				response => response,
 				authFailHandler);
+	}
+
+	setCredentials(userId, password) {
+		this.userId = userId;
+		this.password = password;
 	}
 
 	getServices() {
@@ -46,14 +52,14 @@ export default class StatusClient {
 	}
 
 	_getAuthHeaderVal() {
-		return "Basic " + btoa(auth.getUserId() + ":" + auth.getPassword());
+		return "Basic " + btoa(this._getUsername() + ":" + this._getPassword());
 	}
 
 	_getUsername() {
-		return auth.getUserId();
+		return this.userId;
 	}
 
 	_getPassword() {
-		return auth.getPassword();
+		return this.password;
 	}
 }

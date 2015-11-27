@@ -16,7 +16,7 @@ import ServiceList from "./services/list";
 import NewService from "./services/new";
 import ViewService from "./services/details";
 
-import auth from './auth'
+import { auth, statusClient } from "./globals";
 
 const AdminApp = React.createClass({
 	render() {
@@ -24,6 +24,11 @@ const AdminApp = React.createClass({
 			<div id="app">
 				<Navbar fixedTop={true} inverse={true} fluid={true}>
 					<NavBrand>Status Dashboard</NavBrand>
+					<Nav pullRight>
+						<LinkContainer to="/logout">
+							<NavItem href="#">Logout</NavItem>
+						</LinkContainer>
+					</Nav>
 				</Navbar>
 				<Grid fluid={true}>
 					<Row>
@@ -72,9 +77,10 @@ const Login = React.createClass({
 		const pass = this.refs.pass.value
 
 		auth.login(email, pass, (loggedIn) => {
-			if (!loggedIn)
+			if (!loggedIn) {
 				return this.setState({error: true});
-
+			}
+			statusClient.setCredentials(email, pass);
 			const { location } = this.props;
 
 			if (location.state && location.state.nextPathname) {
