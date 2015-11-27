@@ -51,9 +51,8 @@ export default class Auth {
 		//Create a separate instance so that we're not subject to any settings StatusClient might have set up.
 		var instance = axios.create();
 
-		//Lacking an explicit "validate" endpoint, try getting a list of services and see what happens
 		instance.get(
-			this.baseUrl + "/api/services",
+			this.baseUrl + "/api/isAuthenticated",
 			{
 				headers: {Authorization: this._getAuthHeaderVal(username, pass)},
 				withCredentials: true
