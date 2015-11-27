@@ -44,7 +44,7 @@ export default React.createClass({
 									<label><input className="form-control text-center" ref="email" placeholder="email"/></label>
 								</div>
 								<div className="form-group">
-									<label><input ref="pass" className="form-control text-center" placeholder="password"/></label>
+									<label><input ref="pass" type="password" className="form-control text-center" placeholder="password"/></label>
 								</div>
 								<Button bsStyle="success" onClick={this.handleSubmit}>Login</Button>
 								{this.state.error && (
