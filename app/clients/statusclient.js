@@ -31,8 +31,16 @@ export default class StatusClient {
 		return this._doGet("/api/incidents");
 	}
 
+	getIncidentsByType(type) {
+		return this._doGet("/api/incidents?type=" + type);
+	}
+
 	getActiveIncidents() {
 		return this._doGet("/api/incidents/active");
+	}
+
+	getActiveIncidentsByType(type) {
+		return this._doGet("/api/incidents/active?type=" + type);
 	}
 
 	getIncident(incidentId) {
