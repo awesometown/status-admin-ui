@@ -15,7 +15,7 @@ export default React.createClass({
 	},
 
 	componentDidMount: function () {
-		let incidentsPromise = statusClient.getActiveIncidents()
+		let incidentsPromise = statusClient.getActiveIncidentsByType("unplanned")
 			.then(result => {
 				if (this.isMounted()) {
 					this.setState({incidents: result.data.data});
