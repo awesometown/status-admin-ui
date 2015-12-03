@@ -38,10 +38,6 @@ export default React.createClass({
 	},
 
 	render: function () {
-		var buttonStyle = {
-			float: "right",
-			marginTop: "10px"
-		};
 
 		let content;
 		if (this.state.loaded) {
@@ -52,7 +48,7 @@ export default React.createClass({
 
 		return (
 			<div id="content">
-				<LinkContainer to="/incidents/new"><Button style={buttonStyle}>New Incident</Button></LinkContainer>
+				<LinkContainer to="/incidents/new"><Button className="button">New Incident</Button></LinkContainer>
 				<PageHeader>Incidents</PageHeader>
 				{content}
 			</div>

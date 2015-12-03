@@ -31,8 +31,11 @@ export default React.createClass({
 								<LinkContainer to="/incidents">
 									<NavItem eventKey={2} title="Item">Incidents</NavItem>
 								</LinkContainer>
+								<LinkContainer to="/maintenance">
+									<NavItem eventKey={3}>Maintenance</NavItem>
+								</LinkContainer>
 								<LinkContainer to="/services">
-									<NavItem eventKey={3}>Services</NavItem>
+									<NavItem eventKey={4}>Services</NavItem>
 								</LinkContainer>
 							</Nav>
 						</Col>
