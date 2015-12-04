@@ -57,6 +57,16 @@ export default React.createClass({
 		let fromNow = moment(this.props.incident.updatedAt).fromNow();
 		console.log("From Now: %s", fromNow);
 
+		let startTime = (
+			<span />
+		);
+		if(this.props.incident.startTime !== undefined) {
+			startTime = (
+				<p>Starts moment(this.props.incident.startTime).fromNow()</p>
+			);
+		}
+		console.log("Start Time: %s", startTime);
+
 		let incidentId = this.props.incident.id;
 		console.log("Incident Id: %s", incidentId);
 
@@ -83,10 +93,9 @@ export default React.createClass({
 					</Row>
 					<Row>
 						<Col md={8}>
-
 							<h4>{ incidentServiceStatusId }</h4>
-
 							<p><strong>{ incidentState }</strong> - { lastMessage }</p>
+							{ startTime }
 						</Col>
 						<Col md={4}>
 							{ servicesPanel }
