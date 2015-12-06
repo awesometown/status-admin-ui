@@ -8,7 +8,7 @@ export default React.createClass({
 
 	render: function () {
 		return (
-			<Form type="unplanned" />
+			<Form type="planned" />
 		);
 	}
 
