@@ -12,6 +12,7 @@ import NewIncident from "./incidents/new";
 import UpdateIncident from "./incidents/update";
 
 import MaintenanceList from "./maintenance/list";
+import NewMaintenance from "./maintenance/new";
 
 import ServiceList from "./services/list";
 import NewService from "./services/new";
@@ -41,6 +42,7 @@ ReactDOM.render((
 				<Route path="incidents/:incidentId" component={UpdateIncident}/>
 
 				<Route path="maintenance" component={MaintenanceList}/>
+				<Route path="maintenance/new" component={NewMaintenance}/>
 
 				<Route path="services" component={ServiceList}/>
 				<Route path="services/new" component={NewService}/>
