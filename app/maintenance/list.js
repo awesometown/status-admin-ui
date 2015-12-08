@@ -27,7 +27,7 @@ export default React.createClass({
 			}
 
 		})
-			.catch(result => console.err(result));
+			.catch(result => console.error(result));
 
 		let servicesPromise = statusClient.getServices().then(result => {
 
@@ -42,7 +42,7 @@ export default React.createClass({
 			}
 
 		})
-			.catch(result => console.err(result));
+			.catch(result => console.error(result));
 
 		Promise.all([incidentsPromise, servicesPromise]).then(values => this.setState({ loaded: true }));
 

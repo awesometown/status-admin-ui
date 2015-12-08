@@ -5,17 +5,21 @@ import { PageHeader } from "react-bootstrap";
 import { History } from "react-router";
 import { statusClient } from "../../globals";
 
+import UpdateList from "./updates/list.js"
+
 export default React.createClass({
 
 	mixins: [History],
 
 	propTypes: {
-		type: React.PropTypes.string.isRequired
+		type: React.PropTypes.string.isRequired,
+		incident: React.PropTypes.object
 	},
 
 	getInitialState: function () {
 		return {
-			services: []
+			services: [],
+			incident: this.props.incident
 		};
 	},
 
@@ -27,62 +31,120 @@ export default React.createClass({
 					this.setState({ services: result.data.data });
 				}
 			})
-			.catch(result => console.err(result));
+			.catch(result => console.error(result));
 	},
 
 	handleSubmit: function (update) {
 
-		statusClient.createIncident(update)
-			.then(response => {
+		if (this.state.incident !== undefined) {
 
-				console.log(response);
+			console.log("Updating [incidentId:%s] [update:%O]", this.state.incident.id, update);
 
-				var location = response.headers["location"];
-				var id = location.substring(location.lastIndexOf('/') + 1);
-				this.history.replaceState(null, "/incidents/" + id);
+			let urlPath = this.props.type === 'planned' ? '/maintenance/' : '/incidents/';
 
-			}).catch(response => {
-				console.err(response);
-			});
+			statusClient.updateIncident(this.state.incident.id, update)
+				.then(response => {
+					console.log(response);
+					this.history.replaceState(null, urlPath + this.state.incident.id);
+					this.setState({ incident: response.data });
+				}).catch(response => {
+					console.error(response);
+				});
+
+		} else {
+
+			console.log("Creating [update:%O]", update);
+
+			statusClient.createIncident(update)
+				.then(response => {
+
+					console.log(response);
+
+					let urlPath = this.props.type === 'planned' ? '/maintenance/' : '/incidents/';
+
+					var location = response.headers["location"];
+					var id = location.substring(location.lastIndexOf('/') + 1);
+					this.history.replaceState(null, urlPath + id);
+
+				}).catch(response => {
+					console.error(response);
+				});
+
+		}
+
 	},
 
 	render: function () {
 
+		let pageHeader1 = this.state.incident === undefined ? "New " : "Update ";
+		let pageHeader2 = this.props.type === 'planned' ? "Maintenance" : "Incident";
+
+		let pageHeader = pageHeader1 + pageHeader2;
+
+		let updateList = (
+			<ul></ul>
+		);
+
+		if(this.state.incident !== undefined) {
+			updateList = (
+				<UpdateList incidentUpdates={ this.state.incident.incidentUpdates } />
+			);
+		}
+
 		return (
 			<div id="content">
-				<PageHeader>New Incident</PageHeader>
-				<NewIncidentForm services={ this.state.services } type={ this.props.type } onSubmit={ this.handleSubmit }/>
+				<PageHeader>{ pageHeader }</PageHeader>
+				<IncidentForm services={ this.state.services } type={ this.props.type }
+							  incident={ this.state.incident } onSubmit={ this.handleSubmit }/>
+				{ updateList }
 			</div>
 		);
 
 	}
 });
 
-var NewIncidentForm = React.createClass({
+var IncidentForm = React.createClass({
 
 	propTypes: {
 		type: React.PropTypes.string.isRequired,
+		incident: React.PropTypes.object,
 		services: React.PropTypes.array.isRequired,
 		onSubmit: React.PropTypes.func.isRequired
 	},
 
 	getInitialState: function () {
 
-		let state = "investigating";
-		let serviceStatusId = "degraded";
+		if(this.props.incident !== undefined) {
 
-		if(this.props.type === 'planned') {
-			state = "pending";
-			serviceStatusId = "maintenance";
+			return {
+				title: this.props.incident.title,
+				state: this.props.incident.state,
+				serviceStatusId: this.props.incident.serviceStatusId,
+				description: '',
+				affectedServiceIds: this.props.incident.affectedServiceIds,
+				incident: this.props.incident
+			};
+
+		} else {
+
+			let state = "investigating";
+			let serviceStatusId = "degraded";
+
+			if(this.props.type === 'planned') {
+				state = "pending";
+				serviceStatusId = "ok";
+			}
+
+			return {
+				title: '',
+				state: state,
+				serviceStatusId: serviceStatusId,
+				description: '',
+				affectedServiceIds: []
+			};
+
 		}
 
-		return {
-			title: '',
-			state: state,
-			serviceStatusId: serviceStatusId,
-			description: '',
-			affectedServiceIds: []
-		};
 	},
 
 	handleClick: function (e) {
@@ -111,6 +173,7 @@ var NewIncidentForm = React.createClass({
 	},
 
 	handleStatusChange: function (status) {
+		console.log("Setting status state to %s", status);
 		this.setState({ serviceStatusId: status });
 	},
 
@@ -120,16 +183,19 @@ var NewIncidentForm = React.createClass({
 
 	render: function () {
 
-		let descriptionTitle = "Text for initial update";
-		if(this.props.type === 'planned') {
-			descriptionTitle = "Description";
+		let descriptionTitle = "Text for Initial Update";
+		let buttonTitle = "Create";
+
+		if(this.state.incident !== undefined) {
+			descriptionTitle = "Update Text";
+			buttonTitle = "Update";
 		}
 
 		return (
 			<form id="new-incident-form" role="form">
 				<div className="form-group">
 					<label htmlFor="title">Title</label>
-					<input type="text" className="form-control" name="title" id="title" ref="title"
+					<input type="text" className="form-control" name="title" id="title" ref="title" value={this.state.title}
 						   onChange={ this.handleTitleChange }/>
 				</div>
 				<div className="form-group">
@@ -140,12 +206,12 @@ var NewIncidentForm = React.createClass({
 				</div>
 
 				<StateSelector onChange={ this.handleStateChange } type={ this.props.type } defaultValue={ this.state.state }/>
-				<AffectedServicesSelector services={ this.props.services } onChange={ this.handleServicesChange }/>
-				<StatusSelector onChange={ this.handleStatusChange } type={ this.props.type } defaultValue={ this.state.serviceStatusId }/>
+				<AffectedServicesSelector services={ this.props.services } onChange={ this.handleServicesChange } defaultValue={ this.state.affectedServiceIds } />
+				<StatusSelector onChange={ this.handleStatusChange } type={ this.props.type } defaultValue={ this.state.serviceStatusId } incident={ this.state.incident }/>
 
 				<button type="submit" value="Create" name="Create" id="submit" className="btn btn-default"
 						onClick={ this.handleClick }>
-					Create
+					{ buttonTitle }
 				</button>
 
 			</form>
@@ -195,6 +261,7 @@ var StateSelector = React.createClass({
 var AffectedServicesSelector = React.createClass({
 
 	propTypes: {
+		defaultValue: React.PropTypes.array.isRequired,
 		services: React.PropTypes.array.isRequired,
 		onChange: React.PropTypes.func.isRequired
 	},
@@ -225,14 +292,21 @@ var AffectedServicesSelector = React.createClass({
 
 	render: function () {
 
-		var serviceNodes = this.props.services.map(service =>
-			<div className="checkbox-inline" key={service.id}>
-				<label>
-					<input type="checkbox" ref={ "service_" + service.id } className="service-checkbox"
-							  id={ "service_" + service.id } value={ service.id } onChange={ this.handleSelection }/>
-					{ service.name }
-				</label>
-			</div>);
+		console.log(this.props.defaultValue);
+
+		var serviceNodes = this.props.services.map(service => {
+
+			return (
+				<div className="checkbox-inline" key={service.id}>
+					<label>
+						<input type="checkbox" ref={ "service_" + service.id } className="service-checkbox"
+							   defaultChecked={ this.props.defaultValue.indexOf(service.id) > -1 }
+							   id={ "service_" + service.id } value={ service.id } onChange={ this.handleSelection }/>
+						{ service.name }
+					</label>
+				</div>
+			);
+		});
 
 		return (
 			<div className="form-group">
@@ -251,7 +325,14 @@ var StatusSelector = React.createClass({
 	propTypes: {
 		defaultValue: React.PropTypes.string.isRequired,
 		type: React.PropTypes.string.isRequired,
-		onChange: React.PropTypes.func.isRequired
+		onChange: React.PropTypes.func.isRequired,
+		incident: React.PropTypes.object
+	},
+
+	getInitialState: function () {
+		return {
+			incident: this.props.incident
+		};
 	},
 
 	handleChange: function () {
@@ -263,20 +344,27 @@ var StatusSelector = React.createClass({
 		var statuses = ['ok', 'degraded', 'minor', 'major'];
 
 		if (this.props.type === 'planned') {
-			statuses = ['maintenance'];
+			statuses = ['ok', 'maintenance'];
 		}
 
 		var statusNodes = statuses.map(function (status) {
+
 			return (
 				<option key={ status } value={ status }>{ status }</option>
 			);
+
 		});
+
+		let labelText = "Status for Affected Services";
+		if(this.state.incident !== undefined) {
+			labelText = "New Status for Affected Services";
+		}
 
 		return (
 			<div className="form-group">
-				<label htmlFor="status">New Services Status</label>
-				<select className="form-control" id="status" name="serviceStatusId" ref="status"
-						onChange={ this.handleChange } defaultValue={ this.props.defaultValue }>
+				<label htmlFor="status">{ labelText }</label>
+				<select className="form-control" id="status" name="serviceStatusId" ref="status" defaultValue={ this.props.defaultValue }
+						onChange={ this.handleChange }>
 					{ statusNodes }
 				</select>
 			</div>

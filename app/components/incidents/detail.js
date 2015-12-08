@@ -79,6 +79,8 @@ export default React.createClass({
 		let incidentState = this.props.incident.state;
 		console.log("Incident State: %s", incidentState);
 
+		let urlPath = this.props.incident.type === 'planned' ? '/maintenance/' : '/incidents/';
+
 		return (
 			<Panel>
 				<Grid fluid={true}>
@@ -87,7 +89,7 @@ export default React.createClass({
 							<p style={{float: "right", align: "right"}}>Updated { fromNow }</p>
 
 							<h3 style={{marginTop: "0px"}}>
-								<Link to={ "/incidents/" + incidentId }>{ incidentTitle }</Link>
+								<Link to={ urlPath + incidentId }>{ incidentTitle }</Link>
 							</h3>
 						</Col>
 					</Row>
