@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router";
 import {PageHeader, Grid, Col, Row, Table} from "react-bootstrap";
-import { StatusClient } from "../globals";
+import { statusClient } from "../globals";
 
 export default React.createClass({
 
@@ -19,7 +19,7 @@ export default React.createClass({
 		var location = window.location.href;
 		var id = location.substring(location.lastIndexOf('/') + 1);
 
-		StatusClient.getService(id)
+		statusClient.getService(id)
 			.then(result => {
 				this.setState({service: result.data });
 				console.log(result);

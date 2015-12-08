@@ -1,23 +1,23 @@
 import React from "react";
-import { Link } from "react-router";
+import { History, Link } from "react-router";
 import {PageHeader, Grid, Col, Row, Table} from "react-bootstrap"
-import { StatusClient } from "../globals";
-import history from "../history";
+import { statusClient } from "../globals";
 
 export default React.createClass({
+	mixins: [History],
 
 	handleClick: function(e) {
 		e.preventDefault();
 		var name = this.refs.name.value.trim();
 		var description = this.refs.description.value.trim();
-		StatusClient.createService({
+		statusClient.createService({
 			name: name,
 			description: description
 		}).then(response => {
 			console.log(response);
 			var location = response.headers["location"];
 			var id = location.substring(location.lastIndexOf('/') + 1);
-			history.replaceState(null, "/services/" + id);
+			this.history.replaceState(null, "/services/" + id);
 		}).catch(response => {
 			console.log(response);
 		})

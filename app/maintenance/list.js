@@ -2,8 +2,8 @@ import React from "react";
 
 import { statusClient } from "../globals";
 
-import { LinkContainer } from "react-router-bootstrap";
 import { PageHeader, Button } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap";
 
 import IncidentList from "../components/incidents/list.js"
 
@@ -19,29 +19,29 @@ export default React.createClass({
 
 	componentDidMount: function () {
 
-		let incidentsPromise = statusClient.getActiveIncidentsByType("unplanned").then(result => {
+		let incidentsPromise = statusClient.getActiveIncidentsByType("planned").then(result => {
 
-				if (this.isMounted()) {
-					this.setState({ incidents: result.data.data });
-					console.log(result);
-				}
+			if (this.isMounted()) {
+				this.setState({ incidents: result.data.data });
+				console.log(result);
+			}
 
-			})
+		})
 			.catch(result => console.error(result));
 
 		let servicesPromise = statusClient.getServices().then(result => {
 
-				if (this.isMounted()) {
+			if (this.isMounted()) {
 
-					let servicesMap = {};
-					for (let service of result.data.data) {
-						servicesMap[service.id] = service.name;
-					}
-					this.setState({ servicesMap: servicesMap });
-
+				let servicesMap = {};
+				for (let service of result.data.data) {
+					servicesMap[service.id] = service.name;
 				}
+				this.setState({ servicesMap: servicesMap });
 
-			})
+			}
+
+		})
 			.catch(result => console.error(result));
 
 		Promise.all([incidentsPromise, servicesPromise]).then(values => this.setState({ loaded: true }));
@@ -59,10 +59,12 @@ export default React.createClass({
 
 		return (
 			<div id="content">
-				<LinkContainer to="/incidents/new"><Button className="button">New Incident</Button></LinkContainer>
-				<PageHeader>Incidents</PageHeader>
+				<LinkContainer to="/maintenance/new"><Button className="button">New Maintenance</Button></LinkContainer>
+				<PageHeader>Maintenance</PageHeader>
 				{ content }
 			</div>
 		);
+
 	}
+
 });
