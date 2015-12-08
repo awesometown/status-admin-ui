@@ -37,7 +37,7 @@ export default React.createClass({
 			content = (<div>Loading...</div>);
 		} else {
 			content = (
-				<Form type="unplanned" incident={this.state.incident}/>
+				<Form type="planned" incident={this.state.incident}/>
 			);
 		}
 
