@@ -2,6 +2,10 @@ import { createHistory, useBasename } from 'history'
 import Auth from "./auth";
 import SC from "./clients/statusclient";
 
+String.prototype.capitalizeFirstLetter = function() {
+	return this.charAt(0).toUpperCase() + this.slice(1);
+}
+
 var myBaseUrl;
 if (typeof baseUrl !== 'undefined') {
 	myBaseUrl = baseUrl;
