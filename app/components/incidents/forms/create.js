@@ -3,23 +3,21 @@ import React from "react";
 import { PageHeader } from "react-bootstrap";
 
 import { History } from "react-router";
-import { statusClient } from "../../globals";
+import { statusClient } from "../../../globals";
 
-import UpdateList from "./updates/list.js"
+import UpdateList from "../updates/list.js"
 
 export default React.createClass({
 
 	mixins: [History],
 
 	propTypes: {
-		type: React.PropTypes.string.isRequired,
-		incident: React.PropTypes.object
+		type: React.PropTypes.string.isRequired
 	},
 
 	getInitialState: function () {
 		return {
-			services: [],
-			incident: this.props.incident
+			services: []
 		};
 	},
 
@@ -36,67 +34,32 @@ export default React.createClass({
 
 	handleSubmit: function (update) {
 
-		if (this.state.incident !== undefined) {
+		statusClient.createIncident(update)
+			.then(response => {
 
-			console.log("Updating [incidentId:%s] [update:%O]", this.state.incident.id, update);
+				console.log(response);
 
-			let urlPath = this.props.type === 'planned' ? '/maintenance/' : '/incidents/';
+				let urlPath = this.props.type === 'planned' ? '/maintenance/' : '/incidents/';
 
-			statusClient.updateIncident(this.state.incident.id, update)
-				.then(response => {
-					console.log(response);
-					this.history.replaceState(null, urlPath + this.state.incident.id);
-					this.setState({ incident: response.data });
-				}).catch(response => {
-					console.error(response);
-				});
+				var location = response.headers["location"];
+				var id = location.substring(location.lastIndexOf('/') + 1);
+				this.history.replaceState(null, urlPath + id);
 
-		} else {
-
-			console.log("Creating [update:%O]", update);
-
-			statusClient.createIncident(update)
-				.then(response => {
-
-					console.log(response);
-
-					let urlPath = this.props.type === 'planned' ? '/maintenance/' : '/incidents/';
-
-					var location = response.headers["location"];
-					var id = location.substring(location.lastIndexOf('/') + 1);
-					this.history.replaceState(null, urlPath + id);
-
-				}).catch(response => {
-					console.error(response);
-				});
-
-		}
+			}).catch(response => {
+				console.error(response);
+			});
 
 	},
 
 	render: function () {
 
-		let pageHeader1 = this.state.incident === undefined ? "New " : "Update ";
-		let pageHeader2 = this.props.type === 'planned' ? "Maintenance" : "Incident";
-
-		let pageHeader = pageHeader1 + pageHeader2;
-
-		let updateList = (
-			<ul></ul>
-		);
-
-		if(this.state.incident !== undefined) {
-			updateList = (
-				<UpdateList incidentUpdates={ this.state.incident.incidentUpdates } />
-			);
-		}
+		let pageHeader = this.props.type === 'planned' ? "New Maintenance" : "New Incident";
 
 		return (
 			<div id="content">
 				<PageHeader>{ pageHeader }</PageHeader>
 				<IncidentForm services={ this.state.services } type={ this.props.type }
 							  incident={ this.state.incident } onSubmit={ this.handleSubmit }/>
-				{ updateList }
 			</div>
 		);
 
@@ -107,43 +70,27 @@ var IncidentForm = React.createClass({
 
 	propTypes: {
 		type: React.PropTypes.string.isRequired,
-		incident: React.PropTypes.object,
 		services: React.PropTypes.array.isRequired,
 		onSubmit: React.PropTypes.func.isRequired
 	},
 
 	getInitialState: function () {
 
-		if(this.props.incident !== undefined) {
+		let state = "investigating";
+		let serviceStatusId = "degraded";
 
-			return {
-				title: this.props.incident.title,
-				state: this.props.incident.state,
-				serviceStatusId: this.props.incident.serviceStatusId,
-				description: '',
-				affectedServiceIds: this.props.incident.affectedServiceIds,
-				incident: this.props.incident
-			};
-
-		} else {
-
-			let state = "investigating";
-			let serviceStatusId = "degraded";
-
-			if(this.props.type === 'planned') {
-				state = "pending";
-				serviceStatusId = "ok";
-			}
-
-			return {
-				title: '',
-				state: state,
-				serviceStatusId: serviceStatusId,
-				description: '',
-				affectedServiceIds: []
-			};
-
+		if(this.props.type === 'planned') {
+			state = "pending";
+			serviceStatusId = "ok";
 		}
+
+		return {
+			title: '',
+			state: state,
+			serviceStatusId: serviceStatusId,
+			description: '',
+			affectedServiceIds: []
+		};
 
 	},
 
@@ -185,11 +132,6 @@ var IncidentForm = React.createClass({
 
 		let descriptionTitle = "Text for Initial Update";
 		let buttonTitle = "Create";
-
-		if(this.state.incident !== undefined) {
-			descriptionTitle = "Update Text";
-			buttonTitle = "Update";
-		}
 
 		return (
 			<form id="new-incident-form" role="form">
@@ -325,14 +267,7 @@ var StatusSelector = React.createClass({
 	propTypes: {
 		defaultValue: React.PropTypes.string.isRequired,
 		type: React.PropTypes.string.isRequired,
-		onChange: React.PropTypes.func.isRequired,
-		incident: React.PropTypes.object
-	},
-
-	getInitialState: function () {
-		return {
-			incident: this.props.incident
-		};
+		onChange: React.PropTypes.func.isRequired
 	},
 
 	handleChange: function () {
@@ -356,9 +291,6 @@ var StatusSelector = React.createClass({
 		});
 
 		let labelText = "Status for Affected Services";
-		if(this.state.incident !== undefined) {
-			labelText = "New Status for Affected Services";
-		}
 
 		return (
 			<div className="form-group">

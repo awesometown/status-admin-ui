@@ -1,6 +1,6 @@
 import React from "react";
 
-import Form from "../components/incidents/form.js";
+import Form from "../components/incidents/forms/create.js";
 
 export default React.createClass({
 
