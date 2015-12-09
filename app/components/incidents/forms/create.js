@@ -5,8 +5,6 @@ import { PageHeader } from "react-bootstrap";
 import { History } from "react-router";
 import { statusClient } from "../../../globals";
 
-import UpdateList from "../updates/list.js"
-
 export default React.createClass({
 
 	mixins: [History],
