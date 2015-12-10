@@ -1,6 +1,6 @@
 import React from "react";
 
-import UpdateForm from "../components/incidents/forms/update.js"
+import UpdateIncidentForm from "./forms/UpdateIncidentForm.js"
 
 export default React.createClass({
 

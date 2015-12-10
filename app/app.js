@@ -5,19 +5,19 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Router, Route, IndexRoute, Link, History } from "react-router";
 
-import AdminDashboard from "./dashboard";
+import AdminDashboard from "./components/AdminDashboard";
 
-import IncidentList from "./incidents/list";
-import NewIncident from "./incidents/new";
-import UpdateIncident from "./incidents/update";
+import IncidentListPage from "./components/incidents/IncidentListPage";
+import IncidentCreatePage from "./components/incidents/IncidentCreatePage";
+import IncidentDetailsPage from "./components/incidents/IncidentDetailsPage";
 
-import MaintenanceList from "./maintenance/list";
-import NewMaintenance from "./maintenance/new";
-import UpdateMaintenance from "./maintenance/update";
+import MaintenanceList from "./components/incidents/MaintenanceListPage";
+import NewMaintenance from "./components/incidents/MaintenanceCreatePage";
+import UpdateMaintenance from "./components/incidents/MaintenanceDetailsPage";
 
-import ServiceList from "./services/list";
-import NewService from "./services/new";
-import ViewService from "./services/details";
+import ServiceList from "./components/services/ServiceListPage";
+import NewService from "./components/services/ServiceCreatePage";
+import ViewService from "./components/services/ServiceDetailsPage";
 
 import AdminApp from "./components/AdminApp";
 import Login from "./components/Login";
@@ -38,9 +38,9 @@ ReactDOM.render((
 
 				<IndexRoute component={AdminDashboard}/>
 
-				<Route path="incidents" component={IncidentList}/>
-				<Route path="incidents/new" component={NewIncident}/>
-				<Route path="incidents/:incidentId" component={UpdateIncident}/>
+				<Route path="incidents" component={IncidentListPage}/>
+				<Route path="incidents/new" component={IncidentCreatePage}/>
+				<Route path="incidents/:incidentId" component={IncidentDetailsPage}/>
 
 				<Route path="maintenance" component={MaintenanceList}/>
 				<Route path="maintenance/new" component={NewMaintenance}/>
