@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 import {PageHeader, Button, Grid, Col, Row, Table} from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
+import ServiceList from "./ServiceList";
 import { statusClient } from "../../globals";
 
 export default React.createClass({
@@ -29,15 +30,11 @@ export default React.createClass({
 			marginTop: "10px"
 		};
 
-		var serviceNodes = this.state.services.map(service =>
-			<li key={service.id}><Link to={"/services/" + service.id}>{service.name}</Link></li>);
 		return (
 			<div id="services-list">
 				<LinkContainer to="/services/new"><Button style={buttonStyle}>New Service</Button></LinkContainer>
 				<PageHeader>Services</PageHeader>
-				<ul>
-					{serviceNodes}
-				</ul>
+				<ServiceList services={this.state.services}/>
 			</div>
 		);
 	}
