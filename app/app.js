@@ -3,61 +3,53 @@ import "./admin.css";
 
 import React from "react";
 import ReactDOM from "react-dom";
-import { Router, Route, IndexRoute, Link } from "react-router";
-import { Navbar, NavBrand, Nav, NavItem, Grid, Row, Col } from "react-bootstrap";
-import history from './history';
-import AdminDashboard from "./dashboard";
-import IncidentList from "./incidents/list";
-import NewIncident from "./incidents/new";
-import UpdateIncident from "./incidents/update";
-import {IndexLinkContainer, LinkContainer} from "react-router-bootstrap";
+import { Router, Route, IndexRoute, Link, History } from "react-router";
 
-import ServiceList from "./services/list";
-import NewService from "./services/new";
-import ViewService from "./services/details";
+import AdminDashboard from "./components/AdminDashboard";
 
-const AdminApp = React.createClass({
-	render() {
-		return (
-			<div id="app">
-				<Navbar fixedTop={true} inverse={true} fluid={true}>
-					<NavBrand>Status Dashboard</NavBrand>
-				</Navbar>
-				<Grid fluid={true}>
-					<Row>
-						<Col sm={3} md={2} className="sidebar">
-							<Nav stacked activeKey={1} className="nav-sidebar">
-								<LinkContainer to="/">
-									<NavItem eventKey={1}>Home</NavItem>
-								</LinkContainer>
-								<LinkContainer to="/incidents">
-									<NavItem eventKey={2} title="Item">Incidents</NavItem>
-								</LinkContainer>
-								<LinkContainer to="/services">
-									<NavItem eventKey={3}>Services</NavItem>
-								</LinkContainer>
-							</Nav>
-						</Col>
-						<Col sm={3} smOffset={3} md={6} mdOffset={2} className="main">
-							{this.props.children}
-						</Col>
-					</Row>
-				</Grid>
-			</div>
-		);
+import IncidentListPage from "./components/incidents/IncidentListPage";
+import IncidentCreatePage from "./components/incidents/IncidentCreatePage";
+import IncidentDetailsPage from "./components/incidents/IncidentDetailsPage";
+
+import MaintenanceList from "./components/incidents/MaintenanceListPage";
+import NewMaintenance from "./components/incidents/MaintenanceCreatePage";
+import UpdateMaintenance from "./components/incidents/MaintenanceDetailsPage";
+
+import ServiceList from "./components/services/ServiceListPage";
+import NewService from "./components/services/ServiceCreatePage";
+import ViewService from "./components/services/ServiceDetailsPage";
+
+import AdminApp from "./components/AdminApp";
+import Login from "./components/Login";
+
+
+import { auth, statusClient, history } from "./globals";
+
+function requireAuth(nextState, replaceState) {
+	if (!auth.loggedIn()) {
+		replaceState({nextPathname: nextState.location.pathname}, "/login");
 	}
-});
+}
 
 ReactDOM.render((
 		<Router history={history}>
-			<Route path="/" component={AdminApp}>
+			<Route path="/login" component={Login}/>
+			<Route path="/" component={AdminApp} onEnter={requireAuth}>
+
 				<IndexRoute component={AdminDashboard}/>
-				<Route path="incidents" component={IncidentList}/>
-				<Route path="incidents/new" component={NewIncident}/>
-				<Route path="incidents/:incidentId" component={UpdateIncident}/>
+
+				<Route path="incidents" component={IncidentListPage}/>
+				<Route path="incidents/new" component={IncidentCreatePage}/>
+				<Route path="incidents/:incidentId" component={IncidentDetailsPage}/>
+
+				<Route path="maintenance" component={MaintenanceList}/>
+				<Route path="maintenance/new" component={NewMaintenance}/>
+				<Route path="maintenance/:incidentId" component={UpdateMaintenance}/>
+
 				<Route path="services" component={ServiceList}/>
 				<Route path="services/new" component={NewService}/>
 				<Route path="services/:serviceId" component={ViewService}/>
+
 			</Route>
 		</Router>
 	), document.getElementById("app-container")

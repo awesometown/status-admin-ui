@@ -1,10 +1,11 @@
 import React from "react";
 import { Link } from "react-router";
-import {PageHeader, Grid, Col, Row, Table} from "react-bootstrap";
-import axios from "axios";
-import { StatusClient } from "../globals";
+import {PageHeader, Grid, Col, Row, Table, Well} from "react-bootstrap";
+import moment from "moment";
+import { statusClient } from "../../../globals";
 
 export default React.createClass({
+
 	getInitialState: function () {
 		return {
 			loaded: false
@@ -12,8 +13,10 @@ export default React.createClass({
 	},
 
 	componentDidMount: function () {
+
 		let incidentId = window.location.href.substring(window.location.href.lastIndexOf("/") + 1);
-		let incidentsPromise = StatusClient.getIncident(incidentId)
+
+		let incidentsPromise = statusClient.getIncident(incidentId)
 			.then(result => {
 				if (this.isMounted()) {
 					this.setState({incident: result.data});
@@ -21,7 +24,8 @@ export default React.createClass({
 				}
 			})
 			.catch(result => console.log(result));
-		let servicesPromise = StatusClient.getServices()
+
+		let servicesPromise = statusClient.getServices()
 			.then(result => {
 				if (this.isMounted()) {
 					let servicesMap = {};
@@ -32,7 +36,9 @@ export default React.createClass({
 				}
 			})
 			.catch(result => console.log(result));
+
 		Promise.all([incidentsPromise, servicesPromise]).then(values => this.setState({loaded: true}));
+
 	},
 
 	render: function () {
@@ -44,15 +50,30 @@ export default React.createClass({
 			let affectedServices = this.state.incident.affectedServiceIds.map(serviceId => servicesMap[serviceId]);
 			content = (<div id="content">
 				<PageHeader>{this.state.incident.title}</PageHeader>
+				<Grid fluid>
+					<Row>
+						<Col md={3}><p><b>State:</b></p></Col>
+						<Col md={9}><p>{this.state.incident.state.capitalizeFirstLetter()}</p></Col>
+					</Row>
+					<Row>
+						<Col md={3}><p><b>Service Status:</b></p></Col>
+						<Col md={9}><p>{this.state.incident.serviceStatusId.capitalizeFirstLetter()}</p></Col>
+					</Row>
+					<Row>
+						<Col md={3}><p><b>Affected Services:</b></p></Col>
+						<Col md={9}><AffectedServiceList affectedServices={affectedServices}/></Col>
+					</Row>
+				</Grid>
 
-				<p>State: {this.state.incident.state}</p>
+				<Well style={{padding:"15px", marginTop: "20px"}}>
+					<h4 style={{marginTop:"0px"}}>Post an Update</h4>
+					<IncidentUpdateForm incident={this.state.incident}
+										initialState={this.state.incident.state}
+										initialServiceStatusId={this.state.incident.serviceStatusId}/>
+				</Well>
 
-				<p>Service Status: {this.state.incident.serviceStatusId}</p>
+				<h4>Previous Updates</h4>
 
-				<p>Affected Services:</p>
-				<AffectedServiceList affectedServices={affectedServices}/>
-				<IncidentUpdateForm initialState={this.state.incident.state}
-									initialServiceStatusId={this.state.incident.serviceStatusId}/>
 				<IncidentUpdateList incidentUpdates={this.state.incident.incidentUpdates}/>
 			</div>);
 		}
@@ -63,7 +84,12 @@ export default React.createClass({
 
 var IncidentUpdateForm = React.createClass({
 	getInitialState: function () {
-		return {state: this.props.initialState, serviceStatusId: this.props.initialServiceStatusId, description: ''};
+		return {
+			incident: this.props.incident,
+			state: this.props.initialState,
+			serviceStatusId: this.props.initialServiceStatusId,
+			description: ''
+		};
 	},
 
 	handleStateChange: function (newState) {
@@ -83,8 +109,12 @@ var IncidentUpdateForm = React.createClass({
 		var location = window.location.href;
 		var id = location.substring(location.lastIndexOf('/') + 1);
 
-		var update = { state: this.state.state, serviceStatusId: this.state.serviceStatusId, description: this.state.description };
-		StatusClient.updateIncident(id, update)
+		var update = {
+			state: this.state.state,
+			serviceStatusId: this.state.serviceStatusId,
+			description: this.state.description
+		};
+		statusClient.updateIncident(id, update)
 			.then(response => {
 				console.log(response);
 			}).catch(response => {
@@ -95,17 +125,17 @@ var IncidentUpdateForm = React.createClass({
 	render: function () {
 		return (
 			<form id="update-incident-form" role="form">
-				<p>Post an Update</p>
-
 				<div className="form-group">
 					<label htmlFor="description">Update text</label>
 					<textarea className="form-control" name="description" id="description"
 							  onChange={this.handleDescriptionChange}></textarea>
 				</div>
-				<StateSelector initialValue={this.props.initialState} onChange={this.handleStateChange}/>
-				<StatusSelector initialValue={this.props.initialServiceStatusId} onChange={this.handleStatusChange}/>
+				<StateSelector incident={this.state.incident} initialValue={this.props.initialState} onChange={this.handleStateChange}/>
+				<StatusSelector incident={this.state.incident} initialValue={this.props.initialServiceStatusId} onChange={this.handleStatusChange}/>
 
-				<button value="Update" name="Create" id="submit" className="btn btn-default" onClick={this.onSubmit}>Update</button>
+				<button value="Update" name="Create" id="submit" className="btn btn-default" onClick={this.onSubmit}>
+					Update
+				</button>
 			</form>
 		);
 	}
@@ -130,12 +160,19 @@ var StateSelector = React.createClass({
 	},
 
 	render: function () {
+
 		var states = ['investigating', 'identified', 'monitoring', 'resolved'];
+
+		if (this.props.incident.type === 'planned') {
+			states = ['pending', 'started', 'completed'];
+		}
+
 		var stateNodes = states.map(function (state) {
 			return (
 				<option key={state} value={state}>{state}</option>
 			);
 		});
+
 		return (
 			<div className="form-group">
 				<label htmlFor="state">State</label>
@@ -153,12 +190,19 @@ var StatusSelector = React.createClass({
 	},
 
 	render: function () {
-		var statuses = ['ok', 'degraded', 'minor', 'major']
+
+		var statuses = ['ok', 'degraded', 'minor', 'major'];
+
+		if (this.props.incident.type === 'planned') {
+			statuses = ['ok', 'maintenance'];
+		}
+
 		var statusNodes = statuses.map(function (status) {
 			return (
 				<option key={status} value={status}>{status}</option>
 			);
 		});
+
 		return (
 			<div className="form-group">
 				<label htmlFor="status">New Services Status</label>
@@ -173,7 +217,37 @@ var StatusSelector = React.createClass({
 
 var IncidentUpdateList = React.createClass({
 	render: function () {
-		var updateNodes = this.props.incidentUpdates.map(update => <li key={update.id}>{update.description}</li>);
-		return (<ul>{updateNodes}</ul>);
+		var updateNodes = this.props.incidentUpdates.map(update => <IncidentUpdate update={update} key={update.id}/>);
+		return (
+			<Grid fluid>
+				{updateNodes}
+			</Grid>);
+	}
+});
+
+var IncidentUpdate = React.createClass({
+	render: function () {
+		var rowStyle = {
+			margin: "5px",
+			borderBottom: "2px dashed #eeeeee"
+		};
+
+		var updatedStyle = {
+			color: "#aaaaaa",
+			fontSize: "small"
+		};
+
+		return (
+			<div>
+				<Row style={rowStyle}>
+					<Col>
+						<p><strong>{this.props.update.state.capitalizeFirstLetter()}</strong>
+							- {this.props.update.description}</p>
+
+						<p style={updatedStyle}>Updated {moment(this.props.update.updatedAt).fromNow()}</p>
+					</Col>
+				</Row>
+			</div>
+		);
 	}
 });

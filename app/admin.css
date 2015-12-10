@@ -95,3 +95,8 @@ body {
 	display: inline-block;
 	border-radius: 50%;
 }
+
+.button {
+	float: right;
+	margin-top: 10px
+}

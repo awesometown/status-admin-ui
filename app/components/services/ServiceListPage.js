@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 import {PageHeader, Button, Grid, Col, Row, Table} from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
-import { StatusClient } from "../globals";
+import { statusClient } from "../../globals";
 
 export default React.createClass({
 
@@ -13,7 +13,7 @@ export default React.createClass({
 	},
 
 	componentDidMount: function () {
-		StatusClient.getServices()
+		statusClient.getServices()
 			.then(result => {
 				if (this.isMounted()) {
 					this.setState({services: result.data.data});
