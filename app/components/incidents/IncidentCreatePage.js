@@ -1,6 +1,6 @@
 import React from "react";
 
-import Form from "../components/incidents/form.js";
+import CreateIncidentForm from "./forms/CreateIncidentForm.js";
 
 export default React.createClass({
 
@@ -8,7 +8,7 @@ export default React.createClass({
 
 	render: function () {
 		return (
-			<Form type="planned" />
+			<CreateIncidentForm type="unplanned" />
 		);
 	}
 

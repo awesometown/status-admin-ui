@@ -2,7 +2,7 @@ import React from "react";
 
 import { Row, Col } from "react-bootstrap";
 
-import Incident from "./detail.js"
+import Incident from "./IncidentDetails.js"
 
 export default React.createClass({
 

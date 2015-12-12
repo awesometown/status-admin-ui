@@ -1,11 +1,11 @@
 import React from "react";
 
-import { statusClient } from "../globals";
+import { statusClient } from "../../globals";
 
 import { PageHeader, Button } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 
-import IncidentList from "../components/incidents/list.js"
+import IncidentList from "./IncidentList.js"
 
 export default React.createClass({
 
