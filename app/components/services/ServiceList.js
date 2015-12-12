@@ -14,7 +14,7 @@ export default React.createClass({
 		var serviceNodes = this.props.services.map(service =>
 			<Row key={service.id}>
 				<Col md={4}><Link to={"/services/" + service.id}>{service.name}</Link></Col>
-				<Col md={4}>{service.serviceStatus.name}</Col>
+				<Col md={4}>{service.serviceStatus}</Col>
 			</Row>
 		);
 		return (
