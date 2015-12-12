@@ -8,7 +8,7 @@ export default React.createClass({
 
 	render: function () {
 		return (
-			<UpdateForm />
+			<UpdateIncidentForm />
 		);
 	}
 
