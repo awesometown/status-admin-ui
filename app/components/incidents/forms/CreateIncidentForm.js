@@ -37,7 +37,7 @@ export default React.createClass({
 
 				console.log(response);
 
-				let urlPath = this.props.type === 'planned' ? '/maintenance/' : '/incidents/';
+				let urlPath = this.props.type === 'planned' ? '/admin/maintenance/' : '/admin/incidents/';
 
 				var location = response.headers["location"];
 				var id = location.substring(location.lastIndexOf('/') + 1);

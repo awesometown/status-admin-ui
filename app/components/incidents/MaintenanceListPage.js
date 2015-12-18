@@ -59,7 +59,7 @@ export default React.createClass({
 
 		return (
 			<div id="content">
-				<LinkContainer to="/maintenance/new"><Button className="button">New Maintenance</Button></LinkContainer>
+				<LinkContainer to="/admin/maintenance/new"><Button className="button">New Maintenance</Button></LinkContainer>
 				<PageHeader>Maintenance</PageHeader>
 				{ content }
 			</div>

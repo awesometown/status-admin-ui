@@ -79,7 +79,7 @@ export default React.createClass({
 		let incidentState = this.props.incident.state;
 		console.log("Incident State: %s", incidentState);
 
-		let urlPath = this.props.incident.type === 'planned' ? '/maintenance/' : '/incidents/';
+		let urlPath = this.props.incident.type === 'planned' ? '/admin/maintenance/' : '/admin/incidents/';
 
 		return (
 			<Panel>

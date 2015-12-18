@@ -17,7 +17,7 @@ export default React.createClass({
 			console.log(response);
 			var location = response.headers["location"];
 			var id = location.substring(location.lastIndexOf('/') + 1);
-			this.history.replaceState(null, "/services/" + id);
+			this.history.replaceState(null, "/admin/services/" + id);
 		}).catch(response => {
 			console.log(response);
 		})
