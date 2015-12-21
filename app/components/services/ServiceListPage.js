@@ -32,7 +32,7 @@ export default React.createClass({
 
 		return (
 			<div id="services-list">
-				<LinkContainer to="/services/new"><Button style={buttonStyle}>New Service</Button></LinkContainer>
+				<LinkContainer to="/admin/services/new"><Button style={buttonStyle}>New Service</Button></LinkContainer>
 				<PageHeader>Services</PageHeader>
 				<ServiceList services={this.state.services}/>
 			</div>

@@ -25,16 +25,16 @@ export default React.createClass({
 					<Row>
 						<Col sm={3} md={2} className="sidebar">
 							<Nav stacked activeKey={1} className="nav-sidebar">
-								<LinkContainer to="/">
+								<LinkContainer to="/admin">
 									<NavItem eventKey={1}>Home</NavItem>
 								</LinkContainer>
-								<LinkContainer to="/incidents">
+								<LinkContainer to="/admin/incidents">
 									<NavItem eventKey={2} title="Item">Incidents</NavItem>
 								</LinkContainer>
-								<LinkContainer to="/maintenance">
+								<LinkContainer to="/admin/maintenance">
 									<NavItem eventKey={3}>Maintenance</NavItem>
 								</LinkContainer>
-								<LinkContainer to="/services">
+								<LinkContainer to="/admin/services">
 									<NavItem eventKey={4}>Services</NavItem>
 								</LinkContainer>
 							</Nav>
